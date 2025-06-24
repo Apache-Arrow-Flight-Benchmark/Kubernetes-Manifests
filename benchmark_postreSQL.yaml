@@ -1,0 +1,16 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: ibm-benchmark
+spec:
+  parallelism: 6
+  completions: 6
+  template:
+    spec:
+      containers:
+      - name: benchmark
+        image: Docker Image
+        imagePullPolicy: Always
+        command: ["./benchmark"]
+        args: ["-i", "ibm-service:9443", "-t", "-g","-n","1","-b","8192", "-p", "item", "--postgres_url", "jdbc:postgresql://postgres-service:5432/testdb", "--label", "test1.4"]
+      restartPolicy: OnFailure

@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ibm-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ibm-server
+  template:
+    metadata:
+      labels:
+        app: ibm-server
+    spec:
+      containers:
+      - name: ibm-server
+        image: Docker Image
+        ports:
+        - name: http
+          containerPort: 9080
+        - name: grpc
+          containerPort: 9090
+        - name: https
+          containerPort: 9443
+        env:
+        - name: CSV_FILE_PATH
+          value: "/opt/ibm/wlp/usr/servers/defaultServer/apps/expanded/wdp-connect-sdk-gen-ibmflight.war/resources/data.csv"
+        - name: JAVA_TOOL_OPTIONS
+          value: "-XX:+IgnoreUnrecognizedVMOptions -XX:+PortableSharedCache -XX:+IdleTuningGcOnIdle -Xshareclasses:name=openj9_system_scc,cacheDir=/opt/java/.scc,readonly,nonFatal -Xms64m"
+          requests:
+            memory: "15Gi"
+            cpu:    "10"
+          limits:
+            memory: "15Gi"
+            cpu:    "10"
+        securityContext:
+          runAsUser: 0
+          allowPrivilegeEscalation: true
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ibm-service
+spec:
+  selector:
+    app: ibm-server
+  type: NodePort
+  ports:
+    - name: http
+      port: 9080
+      targetPort: http
+      nodePort: 30080
+    - name: grpc
+      port: 9090
+      targetPort: grpc
+      nodePort: 30090
+    - name: https
+      port: 9443
+      targetPort: https
+      nodePort: 30443

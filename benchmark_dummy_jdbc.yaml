@@ -1,0 +1,16 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: ibm-benchmark
+spec:
+  parallelism: 6
+  completions: 6
+  template:
+    spec:
+      containers:
+      - name: benchmark
+        image: Docker Image
+        imagePullPolicy: Always
+        command: ["./benchmark"]
+        args: ["-i", "ibm-service:9443", "-t", "-l", "-s", "-g","-n","10", "-b","4096", "--label", "test1.3"]
+      restartPolicy: OnFailure
