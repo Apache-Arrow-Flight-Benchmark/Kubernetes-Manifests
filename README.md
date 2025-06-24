@@ -58,3 +58,27 @@ kubectl apply -f benchmark_postreSQL.yaml
 
 # 3 — Watch logs (example: first Job)
 kubectl logs job/benchmark-dummy-jdbc
+```
+
+# collect-pod-metrics.sh
+
+A tiny helper that writes one-second snapshots of **CPU** and **memory** usage of a single Kubernetes Pod to a log file.  
+If the Pod defines a CPU limit, the script also records *usage as a percentage of that limit*.
+
+## Requirements
+
+* `kubectl` configured for the target cluster  
+* `metrics-server` (or any provider that powers `kubectl top`) installed and working  
+* GNU `awk`, `sed`, and `bc` available in the shell environment
+
+## Usage
+
+```bash
+chmod +x collect-pod-metrics.sh
+
+# Edit these three variables at the top of the script:
+POD_NAME="my-pod-abc123"
+NAMESPACE="my-namespace"
+OUTPUT_FILE="pod-metrics.log"
+
+./collect-pod-metrics.sh &
